@@ -1,7 +1,7 @@
+const mongoose = require('mongoose');
+const deviceSchema = new mongoose.Schema({}, { strict : false } );
+const DeviceModel = mongoose.model('Device', deviceSchema, 'devices');
 const DeviceType = require('./device-type.enum');
-
-const devicesDB = {};
-let deviceIndexDB = 1;
 
 class Device {
 
@@ -12,24 +12,25 @@ class Device {
     }
 
     static create(device) {
-        device.id = deviceIndexDB++;
-        devicesDB[device.id] = device;    
+        return DeviceModel.create(device);   
     }
 
     static getById(id) {
-        return devicesDB[id];
+        return DeviceModel.findOne({
+            _id: id
+        });
     }
 
     static update(device) {
-        return devicesDB[device.id] = device;
+        return DeviceModel.update({ _id: device._id }, device);
     }
 
     static delete(id) {
-        return delete devicesDB[id];
+        return DeviceModel.deleteOne({ _id: id });
     }
 
     static getAll() {
-        return Object.values(devicesDB);
+        return DeviceModel.find();
     }
 
 }
